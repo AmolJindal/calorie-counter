@@ -3,7 +3,9 @@ package com.adobe.calorie.repository
 import com.adobe.calorie.data_source.MealsLocalDataSource
 import com.adobe.calorie.model.Meal
 
-class MealsRepository(private val localDataSource: MealsLocalDataSource) {
+class MealsRepository() {
+
+    private val localDataSource = MealsLocalDataSource()
 
     val mealsList = localDataSource.getMealsList()
 

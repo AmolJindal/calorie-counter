@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Calorie</string>
     <string name="fab_add_content_description">Add new meal</string>
+    <string name="hint_meal_name">Burger, Pizza etc..</string>
+    <string name="hint_calories">Calories</string>
+    <string name="button_done">Done</string>
 </resources>
