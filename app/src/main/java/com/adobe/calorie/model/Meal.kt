@@ -12,9 +12,25 @@ data class Meal(
     val calories: Int
 )
 
-enum class MealType(name: String) {
+enum class MealType(private val str: String) {
     BREAKFAST("Breakfast"),
     LUNCH("Lunch"),
     DINNER("Dinner"),
-    SNACKS("Snacks")
+    SNACKS("Snacks");
+
+    override fun toString(): String {
+        return str
+    }
+
+    companion object {
+        fun from(str: String): MealType {
+            return when (str) {
+                BREAKFAST.str -> BREAKFAST
+                LUNCH.str -> LUNCH
+                DINNER.str -> DINNER
+                SNACKS.str -> SNACKS
+                else -> BREAKFAST
+            }
+        }
+    }
 }

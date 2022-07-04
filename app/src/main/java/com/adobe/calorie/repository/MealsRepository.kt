@@ -1,15 +1,17 @@
 package com.adobe.calorie.repository
 
-import com.adobe.calorie.data_source.MealsLocalDataSource
+import androidx.lifecycle.LiveData
 import com.adobe.calorie.model.Meal
+import com.adobe.calorie.result.Result
 
-class MealsRepository() {
+/**
+ * This repository can be implemented for normal app and testing separately.
+ */
+interface MealsRepository {
+    val meals: LiveData<Result<List<Meal>>>
 
-    private val localDataSource = MealsLocalDataSource()
-
-    val mealsList = localDataSource.getMealsList()
-
-    suspend fun addMeal(meal: Meal) = localDataSource.addMeal(meal)
-
-    suspend fun removeMeal(meal: Meal) = localDataSource.deleteMeal(meal)
+    suspend fun addMeal(meal: Meal)
+    suspend fun updateMeal(meal: Meal)
+    suspend fun deleteMeal(meal: Meal)
+    suspend fun deleteAllMeals()
 }

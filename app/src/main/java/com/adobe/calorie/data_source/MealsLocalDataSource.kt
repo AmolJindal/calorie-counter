@@ -1,12 +1,31 @@
 package com.adobe.calorie.data_source
 
-import com.adobe.calorie.CalorieApp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import com.adobe.calorie.model.Meal
+import com.adobe.calorie.result.Result
 
-class MealsLocalDataSource {
-    suspend fun addMeal(meal: Meal) = CalorieApp.db.mealsDao().addMeal(meal)
+class MealsLocalDataSource(private val dao: MealDao) : MealsDataSource {
+    override val meals: LiveData<Result<List<Meal>>>
+        get() {
+            return dao.getAllMeals().map {
+                Result.Success(it)
+            }
+        }
 
-    suspend fun deleteMeal(meal: Meal) = CalorieApp.db.mealsDao().removeMeal(meal)
+    override fun addMeal(meal: Meal) {
+        dao.addMeal(meal)
+    }
 
-    fun getMealsList() = CalorieApp.db.mealsDao().getAllMeals()
+    override fun updateMeal(meal: Meal) {
+        TODO("Not yet implemented")
+    }
+
+    override fun deleteMeal(meal: Meal) {
+        dao.removeMeal(meal)
+    }
+
+    override fun deleteAllMeals() {
+        dao.removeAllMeals()
+    }
 }
