@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.adobe.calorie.customFactory
 import com.adobe.calorie.databinding.FragmentListBinding
+import com.adobe.calorie.result.Result
 
 class ListFragment : Fragment() {
 
-    lateinit var binding: FragmentListBinding
-    lateinit var viewModel: ListViewModel
+    private lateinit var binding: FragmentListBinding
+    private lateinit var viewModel: ListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,7 +22,7 @@ class ListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentListBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(ListViewModel::class.java)
+        viewModel = ViewModelProvider(this, customFactory)[ListViewModel::class.java]
         initRecyclerView()
         subscribeUi()
         return binding.root
@@ -35,7 +37,8 @@ class ListFragment : Fragment() {
 
     private fun subscribeUi() {
         viewModel.meals.observe(viewLifecycleOwner) {
-            (binding.mealsList.adapter as MealsAdapter).submitList(it)
+            if (it is Result.Success)
+                (binding.mealsList.adapter as MealsAdapter).submitList(it.data)
         }
     }
 }

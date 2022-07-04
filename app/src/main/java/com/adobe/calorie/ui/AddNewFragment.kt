@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.adobe.calorie.customFactory
 import com.adobe.calorie.databinding.FragmentAddNewBinding
 import com.adobe.calorie.model.Meal
 import com.adobe.calorie.model.MealType
@@ -15,8 +16,8 @@ import java.util.*
 
 class AddNewFragment : Fragment() {
 
-    lateinit var binding: FragmentAddNewBinding
-    lateinit var viewModel: AddNewViewModel
+    private lateinit var binding: FragmentAddNewBinding
+    private lateinit var viewModel: AddNewViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,7 +25,7 @@ class AddNewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddNewBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(AddNewViewModel::class.java)
+        viewModel = ViewModelProvider(this, customFactory)[AddNewViewModel::class.java]
         initDropdown()
         registerListeners()
         return binding.root
