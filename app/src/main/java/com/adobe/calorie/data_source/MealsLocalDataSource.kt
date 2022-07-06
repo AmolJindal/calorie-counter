@@ -13,6 +13,10 @@ class MealsLocalDataSource(private val dao: MealDao) : MealsDataSource {
             }
         }
 
+    override suspend fun getMeal(id: Int): Meal {
+        return dao.getMealById(id)
+    }
+
     override fun addMeal(meal: Meal) {
         dao.addMeal(meal)
     }

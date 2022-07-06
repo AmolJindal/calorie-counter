@@ -5,13 +5,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.adobe.calorie.model.Meal
 
-class MealsAdapter : ListAdapter<Meal, MealVH>(MealDiff()) {
+class MealsAdapter(private val onCLick: (Meal) -> Unit) :
+    ListAdapter<Meal, MealVH>(MealDiff()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealVH {
         return MealVH.from(parent)
     }
 
     override fun onBindViewHolder(holder: MealVH, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onCLick)
     }
 }
 

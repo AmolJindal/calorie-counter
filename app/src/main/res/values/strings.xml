@@ -4,4 +4,6 @@
     <string name="hint_meal_name">Burger, Pizza etc..</string>
     <string name="hint_calories">Calories</string>
     <string name="button_done">Done</string>
+    <string name="clear_all">Clear all</string>
+    <string name="edit_meal_details">edit meal details</string>
 </resources>

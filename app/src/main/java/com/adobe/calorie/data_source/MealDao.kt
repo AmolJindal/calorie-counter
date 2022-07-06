@@ -20,6 +20,9 @@ interface MealDao {
     @Query("SELECT * FROM Meals")
     fun getAllMeals(): LiveData<List<Meal>>
 
+    @Query("SELECT * FROM Meals WHERE id = :id")
+    suspend fun getMealById(id: Int): Meal
+
     // TODO - add clearAll()
 
     @Delete

@@ -8,7 +8,8 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.adobe.calorie.customFactory
+import com.adobe.calorie.CalorieApp
+import com.adobe.calorie.CustomFactory
 import com.adobe.calorie.databinding.FragmentAddNewBinding
 import com.adobe.calorie.model.Meal
 import com.adobe.calorie.model.MealType
@@ -18,6 +19,7 @@ class AddNewFragment : Fragment() {
 
     private lateinit var binding: FragmentAddNewBinding
     private lateinit var viewModel: AddNewViewModel
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,9 +27,16 @@ class AddNewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddNewBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this, customFactory)[AddNewViewModel::class.java]
+
+        viewModel = ViewModelProvider(this, CustomFactory {
+            AddNewViewModel(CalorieApp.mealsRepository)
+        })[AddNewViewModel::class.java]
+
+        mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(true) // NOT WORKING
         initDropdown()
         registerListeners()
+        subscribeUi()
         return binding.root
     }
 
@@ -36,10 +45,10 @@ class AddNewFragment : Fragment() {
             binding.root.context,
             android.R.layout.simple_spinner_dropdown_item,
             arrayOf(
-                MealType.BREAKFAST.name,
-                MealType.LUNCH.name,
-                MealType.DINNER.name,
-                MealType.SNACKS.name
+                MealType.BREAKFAST.toString(),
+                MealType.LUNCH.toString(),
+                MealType.DINNER.toString(),
+                MealType.SNACKS.toString(),
             )
         )
 
@@ -62,6 +71,15 @@ class AddNewFragment : Fragment() {
                         calories.toInt()
                     )
                 )
+            }
+        }
+    }
+
+    private fun subscribeUi() {
+        viewModel.mealAdded.observe(viewLifecycleOwner) {
+            if (it) {
+                requireActivity().supportFragmentManager.popBackStack() // close this fragment
+                viewModel.mealAddedHandled()
             }
         }
     }

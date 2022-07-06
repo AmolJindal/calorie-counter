@@ -8,17 +8,22 @@ import com.adobe.calorie.model.Meal
 
 class MealVH(private val binding: ViewHolderMealBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(meal: Meal) {
+    fun bind(meal: Meal, onClick: (Meal) -> Unit) {
         binding.apply {
             mealName.text = meal.name
-            mealType.text = meal.type.name
+            mealType.text = meal.type.toString()
             calories.text = meal.calories.toString()
+
+            root.setOnClickListener {
+                onClick.invoke(meal)
+            }
         }
     }
 
     companion object {
         fun from(parent: ViewGroup): MealVH {
-            val binding = ViewHolderMealBinding.inflate(LayoutInflater.from(parent.context))
+            val binding =
+                ViewHolderMealBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return MealVH(binding)
         }
     }
