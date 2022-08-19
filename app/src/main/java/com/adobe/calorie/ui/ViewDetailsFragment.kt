@@ -13,6 +13,7 @@ import com.adobe.calorie.databinding.FragmentViewDetailsBinding
 class ViewDetailsFragment : Fragment() {
     private lateinit var binding: FragmentViewDetailsBinding
     private lateinit var viewModel: ViewDetailsViewModel
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,17 +26,26 @@ class ViewDetailsFragment : Fragment() {
             ViewDetailsViewModel(CalorieApp.mealsRepository, arguments?.getInt(KEY_MEAL_ID))
         })[ViewDetailsViewModel::class.java]
 
+        mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+
         subscribeUi()
+        registerListeners()
         return binding.root
     }
 
     private fun subscribeUi() {
         viewModel.mealData.observe(viewLifecycleOwner) {
             binding.apply {
-                mealName.text = it.name
-                calories.text = it.calories.toString()
-                mealType.text = it.type.toString()
+                mealName.text = it?.name
+                calories.text = it?.calories.toString()
+                mealType.text = it?.type.toString()
             }
+        }
+    }
+
+    private fun registerListeners() {
+        binding.edit.setOnClickListener {
+            mainViewModel.editMeal(arguments?.getInt(KEY_MEAL_ID))
         }
     }
 

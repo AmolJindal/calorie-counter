@@ -1,6 +1,7 @@
 package com.adobe.calorie.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -9,6 +10,7 @@ import com.adobe.calorie.CalorieApp
 import com.adobe.calorie.CustomFactory
 import com.adobe.calorie.R
 import com.adobe.calorie.databinding.FragmentListBinding
+import com.adobe.calorie.model.Meal
 import com.adobe.calorie.result.Result
 
 class ListFragment : Fragment() {
@@ -41,19 +43,28 @@ class ListFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.clear_all -> viewModel.deleteAllMeals()
+        return when (item.itemId) {
+            R.id.clear_all -> {
+                viewModel.deleteAllMeals()
+                true
+            }
+            // always call super for items which are not populated by the current fragment
+            else -> super.onOptionsItemSelected(item)
         }
-
-        return true
     }
 
     private fun initRecyclerView() {
         binding.mealsList.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = MealsAdapter {
-                mainViewModel.viewDetails(it)
-            }
+            adapter = MealsAdapter(object : MealVH.InteractionListener {
+                override fun onClick(meal: Meal) {
+                    mainViewModel.viewDetails(meal.id)
+                }
+
+                override fun onLongClick(meal: Meal) {
+                    Log.d("ViewHolder", "long clicked")
+                }
+            })
         }
     }
 

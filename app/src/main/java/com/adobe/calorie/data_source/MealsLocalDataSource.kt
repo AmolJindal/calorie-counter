@@ -4,8 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.adobe.calorie.model.Meal
 import com.adobe.calorie.result.Result
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class MealsLocalDataSource(private val dao: MealDao) : MealsDataSource {
+class MealsLocalDataSource(
+    private val dao: MealDao,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) :
+    MealsDataSource {
     override val meals: LiveData<Result<List<Meal>>>
         get() {
             return dao.getAllMeals().map {
@@ -13,23 +20,27 @@ class MealsLocalDataSource(private val dao: MealDao) : MealsDataSource {
             }
         }
 
-    override suspend fun getMeal(id: Int): Meal {
-        return dao.getMealById(id)
+    override suspend fun getMeal(id: Int): Meal? = withContext(dispatcher) {
+        dao.getMealById(id)
     }
 
-    override fun addMeal(meal: Meal) {
+    override fun getMealLiveDataById(id: Int): LiveData<Meal?> {
+        return dao.getMealLiveDataById(id)
+    }
+
+    override suspend fun addMeal(meal: Meal) = withContext(dispatcher) {
         dao.addMeal(meal)
     }
 
-    override fun updateMeal(meal: Meal) {
-        TODO("Not yet implemented")
+    override suspend fun updateMeal(meal: Meal) = withContext(dispatcher) {
+        dao.updateMeal(meal)
     }
 
-    override fun deleteMeal(meal: Meal) {
+    override suspend fun deleteMeal(meal: Meal) = withContext(dispatcher) {
         dao.removeMeal(meal)
     }
 
-    override fun deleteAllMeals() {
+    override suspend fun deleteAllMeals() = withContext(dispatcher) {
         dao.removeAllMeals()
     }
 }

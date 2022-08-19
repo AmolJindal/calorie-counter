@@ -15,31 +15,60 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
+        // TODO - see this
+        // When activity is recreated, addOnBackStackChangedListener callback is not called, so...
+        supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
+
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         subscribeUi()
+        addBackStackListener()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
+    private fun addBackStackListener() {
+        supportFragmentManager.addOnBackStackChangedListener {
+            supportActionBar?.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
+        }
     }
 
     private fun subscribeUi() {
         viewModel.state.observe(this) {
-            val newFragment = when (it.first) {
-                MainViewModel.State.ADD_EDIT -> AddNewFragment()
-                MainViewModel.State.LIST -> ListFragment()
-                MainViewModel.State.VIEW -> {
-                    val fragment = ViewDetailsFragment()
-                    val bundle = Bundle().apply {
-                        putInt(ViewDetailsFragment.KEY_MEAL_ID, it.second?.id ?: 0)
+            it?.let {
+                val newFragment = when (it.first) {
+                    MainViewModel.State.ADD_EDIT -> {
+                        val fragment = AddEditFragment()
+                        val bundle = Bundle().apply {
+                            // TODO - how to send null in a bundle?
+                            putInt(AddEditFragment.KEY_MEAL_ID, it.second ?: 0)
+                        }
+                        fragment.arguments = bundle
+
+                        fragment
                     }
-                    fragment.arguments = bundle
+                    MainViewModel.State.LIST -> ListFragment()
+                    MainViewModel.State.VIEW -> {
+                        val fragment = ViewDetailsFragment()
+                        val bundle = Bundle().apply {
+                            putInt(ViewDetailsFragment.KEY_MEAL_ID, it.second ?: 0)
+                        }
+                        fragment.arguments = bundle
 
-                    fragment
+                        fragment
+                    }
                 }
-            }
 
-            supportFragmentManager.beginTransaction().apply {
-                replace(binding.fragment.id, newFragment, "ADD_NEW_FRAGMENT")
-                if (newFragment !is ListFragment)
-                    addToBackStack(null)
-                commit()
+                supportFragmentManager.beginTransaction().apply {
+                    replace(binding.fragment.id, newFragment)
+                    if (newFragment !is ListFragment)
+                        addToBackStack(null)
+                    commit()
+                }
+
+                viewModel.stateHandled()
             }
         }
     }

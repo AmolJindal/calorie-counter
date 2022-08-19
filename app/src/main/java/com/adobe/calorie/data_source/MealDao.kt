@@ -1,11 +1,8 @@
 package com.adobe.calorie.data_source
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
+import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import androidx.room.Query
 import com.adobe.calorie.model.Meal
 
 // TODO - how to handle conflicts?
@@ -21,9 +18,15 @@ interface MealDao {
     fun getAllMeals(): LiveData<List<Meal>>
 
     @Query("SELECT * FROM Meals WHERE id = :id")
-    suspend fun getMealById(id: Int): Meal
+    suspend fun getMealById(id: Int): Meal?
+
+    @Query("SELECT * FROM Meals WHERE id = :id")
+    fun getMealLiveDataById(id: Int): LiveData<Meal?>
 
     // TODO - add clearAll()
+
+    @Update
+    fun updateMeal(meal: Meal)
 
     @Delete
     fun removeMeal(meal: Meal)

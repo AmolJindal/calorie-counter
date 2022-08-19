@@ -8,14 +8,18 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class DefualtMealsRepository(
+class DefaultMealsRepository(
     private val localDataSource: MealsDataSource,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : MealsRepository {
     override val meals: LiveData<Result<List<Meal>>> = localDataSource.meals
 
-    override suspend fun getMeal(id: Int): Meal {
-        return localDataSource.getMeal(id)
+    override suspend fun getMeal(id: Int): Meal? = withContext(dispatcher) {
+        localDataSource.getMeal(id)
+    }
+
+    override fun getMealLiveDataById(id: Int): LiveData<Meal?> {
+        return localDataSource.getMealLiveDataById(id)
     }
 
     override suspend fun addMeal(meal: Meal) = withContext(dispatcher) {

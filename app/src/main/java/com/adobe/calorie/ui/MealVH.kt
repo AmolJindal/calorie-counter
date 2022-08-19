@@ -6,25 +6,39 @@ import androidx.recyclerview.widget.RecyclerView
 import com.adobe.calorie.databinding.ViewHolderMealBinding
 import com.adobe.calorie.model.Meal
 
-class MealVH(private val binding: ViewHolderMealBinding) : RecyclerView.ViewHolder(binding.root) {
+class MealVH(
+    private val binding: ViewHolderMealBinding,
+    private val interactionListener: InteractionListener
+) :
+    RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(meal: Meal, onClick: (Meal) -> Unit) {
+    fun bind(meal: Meal) {
         binding.apply {
             mealName.text = meal.name
             mealType.text = meal.type.toString()
             calories.text = meal.calories.toString()
 
             root.setOnClickListener {
-                onClick.invoke(meal)
+                interactionListener.onClick(meal)
+            }
+
+            root.setOnLongClickListener {
+                interactionListener.onLongClick(meal)
+                true
             }
         }
     }
 
     companion object {
-        fun from(parent: ViewGroup): MealVH {
+        fun from(parent: ViewGroup, interactionListener: InteractionListener): MealVH {
             val binding =
                 ViewHolderMealBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return MealVH(binding)
+            return MealVH(binding, interactionListener)
         }
+    }
+
+    interface InteractionListener {
+        fun onClick(meal: Meal)
+        fun onLongClick(meal: Meal)
     }
 }

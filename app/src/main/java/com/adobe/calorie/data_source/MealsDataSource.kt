@@ -7,9 +7,10 @@ import com.adobe.calorie.result.Result
 interface MealsDataSource {
     val meals: LiveData<Result<List<Meal>>>
 
-    suspend fun getMeal(id: Int): Meal
-    fun addMeal(meal: Meal)
-    fun updateMeal(meal: Meal)
-    fun deleteMeal(meal: Meal)
-    fun deleteAllMeals()
+    suspend fun getMeal(id: Int): Meal?
+    fun getMealLiveDataById(id: Int): LiveData<Meal?>
+    suspend fun addMeal(meal: Meal)
+    suspend fun updateMeal(meal: Meal)
+    suspend fun deleteMeal(meal: Meal)
+    suspend fun deleteAllMeals()
 }
